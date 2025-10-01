@@ -1,2 +1,34 @@
 # ignore python environment folder
-.venv
+.venv/
+venv/
+env/
+
+# Los archivos de modelos pueden ser muy grandes
+/models/*.pkl
+/models/*.h5
+/models/*.pt
+
+
+__pychache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+.ipynb_checkpoints/
+
+# Credentials
+.env
+
+# IDEs
+.vscode/
+.idea/
+
+# Big files on the root folder 
+.csv
+.parquet
+.pkl
+
+# mlflow artifacts handled in dvc
+mlruns/mlartifacts/
+
