@@ -30,5 +30,5 @@ __pychache__/
 .pkl
 
 # mlflow artifacts handled in dvc
-mlruns/mlartifacts/
+mlartifacts/
 

@@ -29,3 +29,14 @@ Obten los datos
 ```
 dvc pull
 ```
+
+
+## Actualizando codigo, modelos y datos 
+
+```bash
+git pull
+dvc pull
+```
+
+Este se asegura que tienes la ultima version del codigo, y que los datos y modelos se obtienen de la `bucket` en S3
+
