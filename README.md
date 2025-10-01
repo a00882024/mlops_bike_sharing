@@ -13,3 +13,19 @@ python -m venv .venv
 
 pip install -r requirements.txt
 ```
+
+Configura DVC para obtener los datos 
+
+```bash
+dvc remote modify --local origin \
+  access_key_id ACCESS_KEY_ID
+
+dvc remote modify --local origin \
+  secret_access_key SECRET_KEY
+```
+
+Obten los datos 
+
+```
+dvc pull
+```
