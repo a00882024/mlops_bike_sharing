@@ -3,6 +3,58 @@
 
 Este repositorio contiene los "notebooks", "scripts" y artefactos de mlflow relacionados al proyecto
 
+## Arquitectura del Proyecto
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│              Proyecto MLOps de Bike Sharing                     │
+└─────────────────────────────────────────────────────────────────┘
+
+┌──────────────────┐         ┌──────────────────┐
+│   Repo GitHub    │◄────────┤  Entorno Local   │
+│ (Código/Config)  │────────►│     (.venv)      │
+└──────────────────┘         └────────┬─────────┘
+                                      │
+                                      │
+                         ┌────────────┼────────────┐
+                         │            │            │
+                         ▼            ▼            ▼
+              ┌──────────────┐ ┌──────────┐ ┌──────────────┐
+              │     DVC      │ │ MLflow   │ │  Notebooks   │
+              │  (Remoto S3) │ │   UI     │ │ (Jupyter/VS) │
+              └──────┬───────┘ └────┬─────┘ └──────────────┘
+                     │              │
+                     │              │
+              ┌──────▼───────┐      │
+              │              │      │
+              │  Datos/      │      │
+              │  Artefactos  │      │
+              │              │      │
+              │  • data/     │      │
+              │  • mlruns/   │◄─────┘
+              │    mlartifacts/
+              └──────────────┘
+
+
+Flujo de Datos:
+───────────────
+1. dvc pull  ──►  S3 ──► data/ & mlruns/mlartifacts/ locales
+2. Notebooks ──►  Entrenar modelos ──► Registro en MLflow
+3. dvc add   ──►  Rastrear nuevos datos/modelos
+4. dvc push  ──►  Subir a S3
+5. git push  ──►  Versionar archivos .dvc y código
+
+
+Componentes Clave:
+──────────────────
+├── data/               (Datasets rastreados con DVC)
+├── mlruns/            (Experimentos de MLflow)
+│   └── mlartifacts/   (Modelos rastreados con DVC)
+├── notebooks/         (Notebooks de Jupyter)
+├── src/              (Código fuente)
+└── .dvc/             (Configuración de DVC)
+```
+
 ## Baja el repositorio 
 
 ```bash
