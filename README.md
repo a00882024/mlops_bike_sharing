@@ -127,30 +127,30 @@ Abre los notebooks desde el explorador de archivos en VSCode
 
 ## Para contribuir al proyecto 
 
-1. Crea una rama nueva para tu contribucion
+1. Crea un fork del repositorio en tu cuenta de GitHub
+
+2. Clona tu fork a tu maquina local
+
+3. Realiza los pasos de setup inicial 
+
+4. Crea una rama para tus cambios
 
 ```bash
 git checkout -b feat/<nombre-de-tu-rama>
 ```
 
-2. Asegura de tener corriendo mlflow
+5. Realiza tus cambios
 
-```bash
-mlflow ui
-```
-
-3. Realiza tus cambios
-
-4. Asegurate de subir los datos y modelos a DVC
+6. Sube los datos a DVC
 
 ```bash
 dvc add <ruta-al-archivo>
 git add <ruta-al-archivo>.dvc
-git commit -m "Agrega datos/modelos a DVC"
+git commit -m "Agrega datos a DVC"
 git push origin feat/<nombre-de-tu-rama>
 dvc pusheee
 ```
 
-5. Realiza un `pull request` a la rama `main` y espera a que alguien del equipo revise y apruebe tus cambios
+7. Sube tus cambios a tu fork en GitHub
 
-6. Una vez aprobado, haz `merge` de tu rama a `main` y elimina tu rama
+8. Realiza un `pull request` a la rama `main` del repositorio original y espera a que alguien del equipo revise y apruebe tus cambios
