@@ -43,7 +43,3 @@ $RECYCLE.BIN/
 
 # mlflow artifacts handled in dvc
 mlartifacts/
-
-#.csv
-data/bike_sharing_modified.csv
-data/bike_sharing_original.csv
