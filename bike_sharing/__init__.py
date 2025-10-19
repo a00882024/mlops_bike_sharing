@@ -1,1 +1,1 @@
-from super_team_etico import config  # noqa: F401
+from bike_sharing import config  # noqa: F401
