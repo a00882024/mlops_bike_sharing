@@ -29,3 +29,5 @@ nbautoexport>=0.5.2
 # Testing
 pytest>=7.0.0
 
+# Additional libraries
+holidays
