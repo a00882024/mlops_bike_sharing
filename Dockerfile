@@ -13,6 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the bike_sharing package
 COPY bike_sharing/ ./bike_sharing/
 
+# Copy models directory
+COPY models/ ./models/
+
 # Expose the port the app runs on
 EXPOSE 8000
 
