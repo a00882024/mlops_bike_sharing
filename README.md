@@ -58,6 +58,7 @@ Componentes Clave:
 ## Reproducibilidad
 
 Parar reproducir los diferentes "stages" del proyecto se utilizó dvc
+```
 
                          +----------------------------------------+             +----------------------------------------+
                          | data/raw/bike_sharing_modified.csv.dvc |             | data/raw/bike_sharing_original.csv.dvc |
@@ -80,9 +81,7 @@ Parar reproducir los diferentes "stages" del proyecto se utilizó dvc
 +---------------------+             +-------------------+             +-----------+             +---------------+             +----------------+
 | train_random_forest |             | train_elastic_net |             | train_svr |             | train_xgboost |             | train_lightgbm |
 +---------------------+             +-------------------+             +-----------+             +---------------+             +----------------+
-+------------------------+
-| mlruns/mlartifacts.dvc |
-+------------------------+
+```
 
 
 Para observar el diagrama utiliza
