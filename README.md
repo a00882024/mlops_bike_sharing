@@ -6,53 +6,99 @@ Este repositorio contiene los "notebooks", "scripts" y artefactos de mlflow rela
 ## Arquitectura del Proyecto
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│              Proyecto MLOps de Bike Sharing                     │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│                 Proyecto MLOps de Bike Sharing                       │
+└──────────────────────────────────────────────────────────────────────┘
 
-┌──────────────────┐         ┌──────────────────┐
-│   Repo GitHub    │◄────────┤  Entorno Local   │
-│ (Código/Config)  │────────►│     (.venv)      │
-└──────────────────┘         └────────┬─────────┘
-                                      │
-                                      │
-                         ┌────────────┼────────────┐
-                         │            │            │
-                         ▼            ▼            ▼
-              ┌──────────────┐ ┌──────────┐ ┌──────────────┐
-              │     DVC      │ │ MLflow   │ │  Notebooks   │
-              │  (Remoto S3) │ │   UI     │ │ (Jupyter/VS) │
-              └──────┬───────┘ └────┬─────┘ └──────────────┘
-                     │              │
-                     │              │
-              ┌──────▼───────┐      │
-              │              │      │
-              │  Datos/      │      │
-              │  Artefactos  │      │
-              │              │      │
-              │  • data/     │      │
-              │  • mlruns/   │◄─────┘
-              │    mlartifacts/
-              └──────────────┘
+┌──────────────────┐         ┌───────────────────────────────────────┐
+│   Repo GitHub    │◄────────┤      Entorno Local (.venv)            │
+│ (Código/Config)  │────────►│                                       │
+└──────────────────┘         └────────────┬──────────────────────────┘
+                                          │
+                    ┌─────────────────────┼─────────────────────┐
+                    │                     │                     │
+                    ▼                     ▼                     ▼
+         ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+         │   DVC Pipeline   │  │  MLflow Server   │  │   Notebooks      │
+         │  (params.yaml)   │  │   (Tracking)     │  │ (Exploración)    │
+         └────────┬─────────┘  └────────┬─────────┘  └──────────────────┘
+                  │                     │
+                  │ ┌───────────────────┘
+                  │ │
+                  ▼ ▼
+         ┌─────────────────────────────────────────┐
+         │        Pipeline Stages (DVC)            │
+         │                                         │
+         │  1. data_cleaning                       │
+         │  2. feature_engineering                 │
+         │  3. train_* (5 modelos)                 │
+         │     • RandomForest                      │
+         │     • ElasticNet                        │
+         │     • SVR                               │
+         │     • XGBoost                           │
+         │     • LightGBM                          │
+         └────────────────┬────────────────────────┘
+                          │
+           ┌──────────────┼──────────────┐
+           │              │              │
+           ▼              ▼              ▼
+    ┌───────────┐  ┌───────────┐  ┌───────────┐
+    │   data/   │  │  models/  │  │  mlruns/  │
+    │  (DVC+S3) │  │  (PKL)    │  │ (MLflow)  │
+    └───────────┘  └─────┬─────┘  └───────────┘
+                         │
+                         │
+                         ▼
+              ┌────────────────────┐
+              │   FastAPI Server   │
+              │   (api_server.py)  │
+              │                    │
+              │  • /predict        │
+              │  • Docker support  │
+              └──────────┬─────────┘
+                         │
+              ┌──────────┴─────────┐
+              │                    │
+              ▼                    ▼
+       ┌─────────────┐      ┌─────────────┐
+       │ Monitoring  │      │    Tests    │
+       │ (Drift)     │      │  (Pytest)   │
+       └─────────────┘      └─────────────┘
 
 
-Flujo de Datos:
-───────────────
-1. dvc pull  ──►  S3 ──► data/ & mlruns/mlartifacts/ locales
-2. Notebooks ──►  Entrenar modelos ──► Registro en MLflow
-3. dvc add   ──►  Rastrear nuevos datos/modelos
-4. dvc push  ──►  Subir a S3
-5. git push  ──►  Versionar archivos .dvc y código
+Flujo de Trabajo:
+─────────────────
+1. dvc pull          ──►  Descargar datos/modelos desde S3
+2. dvc repro         ──►  Ejecutar pipeline completo
+3. Notebooks         ──►  Experimentación y análisis
+4. Entrenamiento     ──►  Registro automático en MLflow
+5. Modelos           ──►  Guardados en models/ (PKL files)
+6. FastAPI           ──►  Servir predicciones
+7. Monitoring        ──►  Detectar data drift
+8. dvc push/git push ──►  Versionar código y artefactos
 
 
 Componentes Clave:
 ──────────────────
-├── data/               (Datasets rastreados con DVC)
-├── mlruns/            (Experimentos de MLflow)
-│   └── mlartifacts/   (Modelos rastreados con DVC)
-├── notebooks/         (Notebooks de Jupyter)
-├── src/              (Código fuente)
-└── .dvc/             (Configuración de DVC)
+├── bike_sharing/         (Paquete Python principal)
+│   ├── api_server.py     (FastAPI server)
+│   ├── dataset.py        (Limpieza de datos)
+│   ├── features.py       (Feature engineering)
+│   ├── modeling/         (Entrenamiento y predicción)
+│   └── monitoring/       (Data drift detection)
+├── data/                 (Datasets rastreados con DVC)
+│   ├── raw/              (Datos originales)
+│   ├── processed/        (Datos procesados)
+│   ├── interim/          (Datos intermedios)
+│   └── external/         (Datos externos)
+├── models/               (Modelos entrenados .pkl)
+├── mlruns/              (Experimentos de MLflow)
+├── notebooks/           (Notebooks de Jupyter)
+├── tests/               (Unit & Integration tests)
+├── dvc.yaml             (Definición del pipeline)
+├── params.yaml          (Parámetros de configuración)
+├── Dockerfile           (Containerización)
+└── .dvc/                (Configuración de DVC)
 ```
 
 ## Reproducibilidad
